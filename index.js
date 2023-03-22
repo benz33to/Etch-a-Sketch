@@ -1,13 +1,18 @@
+// Initialization
 const sketchGrid = document.querySelector('.sketch-grid');
 const resetButton = document.querySelector('#reset-button');
 const squareNumberButton = document.querySelector('#square-number-button');
-let squareColor = getRandomColor();
+let shade = 0;
+let squareColor = '';
 
+// Functions
+// Calculates a random color rgb value and applies shade on each brush stroke, when shade = 1 color is black
 function getRandomColor() {
     const randomBetween = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
-    const r = randomBetween(0, 255);
-    const g = randomBetween(0, 255);
-    const b = randomBetween(0, 255);
+    const g = randomBetween(0, 255) * (1 - shade);
+    const b = randomBetween(0, 255) * (1 - shade);
+    const r = randomBetween(0, 255) * (1 - shade);
+    if (shade < 1) shade+=0.1; // Increase shade value
     return `rgb(${r},${g},${b})`;
 }
 
@@ -23,10 +28,16 @@ function endDraw() {
     sketchGrid.removeEventListener('mouseover', draw);
 };
 
+function initColors() {
+    shade = 0.1;
+    squareColor = getRandomColor();
+}
+
 function resetDrawing() {
     Array.from(sketchGrid.children).forEach(square => {
         square.style.backgroundColor = 'white';
-    })
+    });
+    initColors();
 };
 
 function changeGrid() {
@@ -42,6 +53,7 @@ function rebuildGrid(squareNumber) {
         sketchGrid.firstChild.remove();
     }
     buildGrid(squareNumber);
+    initColors();
 }
 
 function buildGrid (cells = 16) {
@@ -63,5 +75,6 @@ resetButton.addEventListener('click', resetDrawing);
 squareNumberButton.addEventListener('click', changeGrid);
 
 // Build grid
-buildGrid()
+initColors();
+buildGrid();
 
